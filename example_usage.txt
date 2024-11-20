@@ -1,0 +1,1 @@
+python -s safetensors_util.py metadata "YOUR_PATH_TO_THE.safetensors" -pm
