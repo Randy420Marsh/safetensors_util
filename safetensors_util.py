@@ -1,4 +1,8 @@
-import sys, click
+import sys
+import click
+
+import sys
+print("Using Python executable:", sys.executable)
 
 import safetensors_worker
 # This file deals with command line only. If the command line is parsed successfully,
