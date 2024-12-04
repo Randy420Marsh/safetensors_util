@@ -1,1 +1,0 @@
-python -s safetensors_util.py metadata "H://AI//stable_diffusion_models_and_vae//models//Lora//alien_girl_4c.safetensors" -pm
