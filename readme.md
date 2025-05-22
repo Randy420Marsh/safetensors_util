@@ -2,7 +2,6 @@
 
 This is a light-weight utility program for [safetensors files](https://github.com/huggingface/safetensors "safetensors files") written in Python only (no major external dependencies). Currently it can do the following:
 
-
     Usage: safetensors_util.py [OPTIONS] COMMAND [ARGS]...
 
     Options:
@@ -11,9 +10,11 @@ This is a light-weight utility program for [safetensors files](https://github.co
       --help       Show this message and exit.
 
     Commands:
+      cf           compact F32 and F64 tensors to F16
+      checkhdr     check header for possible errors
       checklora    see if input file is a SD 1.x LoRA file
       extractdata  extract one tensor and save to file
-      extracthdr   extract file header and save to output file
+      extracthdr   extract file header and save to file
       header       print file header
       listkeys     print header key names (except __metadata__) as a Python list
       metadata     print only __metadata__ in file header
@@ -24,22 +25,22 @@ The most useful thing is probably the read and write metadata commands. To read 
 
         python safetensors_util.py metadata input_file.safetensors -pm
 
-Many safetensors files, especially LoRA files, have a \_\_metadata\_\_ field in the file header that records training information, such as learning rates, number of epochs, number of images used, etc. You can see how your favorite file was trained and perhaps use some of the training parameters for your own model in the future.
+Many safetensors files, for example LoRA files, have a \_\_metadata\_\_ field that records metadata such as learning rates during training, number of epochs, number of images used, etc.
 
-The optional **-pm** flag is meant to make output more readable. Because safetensors files only allow string-to-string dictionary in metadata, non-string values must be quoted. Basically the **-pm** flag tries to turn this:
+The optional **-pm** flag is meant to make \_\_metadata\_\_ more readable. Because safetensors files allow only string-to-string key-value pairs in metadata, non-string values must be quoted, for example:
 
         "ss_dataset_dirs":"{\"abc\": {\"n_repeats\": 2, \"img_count\": 60}}",
 
-into this:
+ The **-pm** flag tries to turn the above into this:
 
-        "ss_dataset_dirs":{
-         "abc":{
-          "n_repeats":2,
-          "img_count":60
-         }
-        },
+        "ss_dataset_dirs" : {
+          "abc":{
+            "n_repeats":2,
+            "img_count":60
+          }
+        }
 
-You can create a JSON file containing a \_\_metadata\_\_ entry:
+You can also create a JSON file containing a \_\_metadata\_\_ entry:
 
     {
          "__metadata__":{

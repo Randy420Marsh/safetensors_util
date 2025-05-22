@@ -241,3 +241,44 @@ def ExtractData(cmdLine:dict,input_file:str,key_name:str,output_file:str)->int:
             return -1
     if cmdLine['quiet']==False: print(f"{key_name} saved to {output_file}, len={wn}")
     return 0
+
+def CheckHeader(cmdLine:dict,input_file:str)->int:
+    rv:int=0
+    s=SafeTensorsFile.open_file(input_file)
+    maxoffset=int(s.st.st_size-8-s.headerlen)
+    h=s.get_header()
+    for k,v in h.items():
+        if k=='__metadata__': continue
+        #print(k,v)
+        msgs=[]
+        if v['data_offsets'][0]>maxoffset or v['data_offsets'][1]>maxoffset:
+            msgs.append("data past end of file")
+        lenv=int(v['data_offsets'][1]-v['data_offsets'][0])
+        items=int(1)
+        for i in v['shape']: items*=int(i)
+
+        if v['dtype']=="F16":
+            item_size=int(2)
+        elif v['dtype']=="F32":
+            item_size=int(4)
+        elif v['dtype']=="F64":
+            item_size=int(8)
+        else:
+            item_size=int(0)
+
+        if item_size==0:
+            if (lenv % items)!=0:
+                msgs.append("length not integral multiples of item count")
+        else:
+            len2=item_size*items
+            if len2!=lenv:
+                msgs.append(f"length should be {len2}, actual length is {lenv}")
+
+        if len(msgs) > 0:
+            print(f"error in f{k}:{v}:")
+            for m in msgs:
+                print(" * ",m,sep='')
+            rv=1
+
+    if rv==0: print("no error found")
+    return rv
