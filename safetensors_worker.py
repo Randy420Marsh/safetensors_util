@@ -220,6 +220,7 @@ def CheckLoRA(cmdLine:dict,input_file:str)->int:
     s=SafeTensorsFile.open_file(input_file)
     i:int=_CheckLoRA_internal(s)
     if i==0: print("looks like an OK SD 1.x LoRA file")
+    else: print("input file is not a valid SD 1.x LoRA file")
     return 0
 
 def ExtractData(cmdLine:dict,input_file:str,key_name:str,output_file:str)->int:
